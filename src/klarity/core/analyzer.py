@@ -21,13 +21,8 @@ from pydantic import BaseModel
 from scipy.stats import entropy
 from sentence_transformers import SentenceTransformer
 from sklearn.metrics.pairwise import cosine_similarity
-# Make vllm optional
-try:
-    from vllm import LLM, SamplingParams
-    from vllm.sampling_params import GuidedDecodingParams
-    HAS_VLLM = True
-except ImportError:
-    HAS_VLLM = False
+from vllm import LLM, SamplingParams
+from vllm.sampling_params import GuidedDecodingParams
 
 from klarity.core.schemas.insight_schemas import InsightAnalysisResponseModel
 from klarity.core.schemas.reasoning_analysis_schemas import (

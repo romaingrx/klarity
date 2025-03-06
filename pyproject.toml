@@ -7,7 +7,7 @@ name = "klarity"
 version = "0.1.0"
 description = "Uncertainty estimation for open-source generative models"
 readme = "README.md"
-requires-python = ">=3.9"
+requires-python = ">=3.9, <3.13"
 dependencies = [
     "scikit-learn>=1.0.0",
     "numpy>=1.20.0",
@@ -20,16 +20,16 @@ dependencies = [
     "setuptools>=65.0.0",
     # Use torch 2.5.1 for Python < 3.13, and 2.6.0 for Python >= 3.13
     "torch==2.5.1 ; python_version < '3.13'",
-    "torch>=2.6.0 ; python_version >= '3.13'",
     "sentence-transformers>=2.2.0",
     "accelerate>=0.20.0",
     # CUDA dependencies (only on systems with CUDA)
     "cuda-python>=12.0.0 ; platform_system == 'Linux' and platform_machine == 'x86_64'",
     "nvidia-cuda-nvrtc-cu12>=12.0.0 ; platform_system == 'Linux' and platform_machine == 'x86_64'",
     # vllm dependencies (only for Python < 3.13 as it requires torch==2.5.1)
-    "vllm>=0.7.0 ; python_version < '3.13'",
+    "vllm>=0.7.0",
     # xgrammar dependencies (only for Linux/macOS and Python <= 3.12 as it doesn't have wheels for Windows or Python 3.13)
-    "xgrammar>=0.1.0 ; platform_system != 'Windows' and python_version <= '3.12'",
+    # also, only from 0.1.14 onwards is it compatible with non-cuda machines
+    "xgrammar>=0.1.14 ; platform_system != 'Windows'",
 ]
 
 # Keep dev as an optional dependency group for explicit installation
