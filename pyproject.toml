@@ -26,7 +26,7 @@ dependencies = [
     "cuda-python>=12.0.0 ; platform_system == 'Linux' and platform_machine == 'x86_64'",
     "nvidia-cuda-nvrtc-cu12>=12.0.0 ; platform_system == 'Linux' and platform_machine == 'x86_64'",
     # vllm dependencies (only for Python < 3.13 as it requires torch==2.5.1)
-    "vllm>=0.7.0",
+    "vllm>=0.7.0; platform_system != 'Windows'",
     # xgrammar dependencies (only for Linux/macOS and Python <= 3.12 as it doesn't have wheels for Windows or Python 3.13)
     # also, only from 0.1.14 onwards is it compatible with non-cuda machines
     "xgrammar>=0.1.14 ; platform_system != 'Windows'",
