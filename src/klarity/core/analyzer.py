@@ -10,14 +10,24 @@ from typing import Any, Dict, List, Optional
 import matplotlib.pyplot as plt
 import numpy as np
 import torch
-import xgrammar as xgr
+# Make xgrammar optional
+try:
+    import xgrammar as xgr
+    HAS_XGRAMMAR = True
+except ImportError:
+    HAS_XGRAMMAR = False
 from PIL import Image
 from pydantic import BaseModel
 from scipy.stats import entropy
 from sentence_transformers import SentenceTransformer
 from sklearn.metrics.pairwise import cosine_similarity
-from vllm import LLM, SamplingParams
-from vllm.sampling_params import GuidedDecodingParams
+# Make vllm optional
+try:
+    from vllm import LLM, SamplingParams
+    from vllm.sampling_params import GuidedDecodingParams
+    HAS_VLLM = True
+except ImportError:
+    HAS_VLLM = False
 
 from klarity.core.schemas.insight_schemas import InsightAnalysisResponseModel
 from klarity.core.schemas.reasoning_analysis_schemas import (
@@ -175,21 +185,39 @@ class EntropyAnalyzer:
         # Assume HuggingFace model
         else:
             inputs = self.insight_tokenizer(prompt, return_tensors="pt").to(self.insight_model.device)
-
-            # Use xgrammar to enforce structured outputs
-            tokenizer_info = xgr.TokenizerInfo.from_huggingface(self.insight_tokenizer)
-            grammar_compiler = xgr.GrammarCompiler(tokenizer_info)
-            compiled_grammar = grammar_compiler.compile_json_schema(self.insight_response_model)
-            xgr_logits_processor = xgr.contrib.hf.LogitsProcessor(compiled_grammar)
-
-            outputs = self.insight_model.generate(
-                **inputs,
-                max_new_tokens=400,
-                temperature=0.7,
-                top_p=0.9,
-                do_sample=True,
-                logits_processor=[xgr_logits_processor],
-            )
+            
+            # Use xgrammar to enforce structured outputs if available
+            if HAS_XGRAMMAR and self.insight_tokenizer and self.insight_response_model:
+                try:
+                    tokenizer_info = xgr.TokenizerInfo.from_huggingface(self.insight_tokenizer)
+                    grammar_compiler = xgr.GrammarCompiler(tokenizer_info)
+                    compiled_grammar = grammar_compiler.compile_json_schema(self.insight_response_model)
+                    xgr_logits_processor = xgr.contrib.hf.LogitsProcessor(compiled_grammar)
+                    
+                    # Generate with grammar constraints
+                    outputs = self.insight_model.generate(
+                        **inputs,
+                        max_new_tokens=400,
+                        temperature=0.7,
+                        top_p=0.9,
+                        logits_processor=[xgr_logits_processor],
+                    )
+                except Exception as e:
+                    print(f"Error using xgrammar: {e}. Falling back to standard generation.")
+                    outputs = self.insight_model.generate(
+                        **inputs,
+                        max_new_tokens=400,
+                        temperature=0.7,
+                        top_p=0.9,
+                    )
+            else:
+                # Standard generation without grammar constraints
+                outputs = self.insight_model.generate(
+                    **inputs,
+                    max_new_tokens=400,
+                    temperature=0.7,
+                    top_p=0.9,
+                )
             return self.insight_tokenizer.decode(outputs[0], skip_special_tokens=True)
 
     def analyze(self, request: UncertaintyAnalysisRequest) -> UncertaintyMetrics:

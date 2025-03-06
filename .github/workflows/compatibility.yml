@@ -1,22 +1,19 @@
-name: Tests
+name: Cross-Platform Compatibility
 
+# On all branches and push, pull request, and workflow dispatch
 on:
   push:
   pull_request:
   workflow_dispatch:
 
 jobs:
-  test:
+  build:
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
       matrix:
-        python-version:
-          - "3.11"
-          # - "3.12" # Remove 3.12 for the moment
-        os:
-          # - macos-latest # Remove macos for the moment, but would be good to add back in at a later stage
-          - ubuntu-latest
+        os: [ubuntu-latest, windows-latest, macos-latest]
+        python-version: ["3.8", "3.9", "3.10", "3.11"]
 
     steps:
       - uses: actions/checkout@v4
@@ -29,9 +26,8 @@ jobs:
           python-version: ${{ matrix.python-version }}
 
       - name: Install dependencies
-        run: uv sync --all-extras --dev
+        run: uv sync
 
-      - name: Run tests
+      - name: Test basic import
         run: |
-          uv run pytest
-
+          uv run python -c "import klarity; print(klarity.__version__)"

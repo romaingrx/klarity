@@ -7,7 +7,17 @@ import torch
 from together import Together
 from transformers import LogitsProcessor, PreTrainedTokenizer
 
-from .core.analyzer import EnhancedVLMAnalyzer, EntropyAnalyzer, VLMAnalyzer
+# Import analyzers with conditional checks
+from .core.analyzer import EntropyAnalyzer
+try:
+    from .core.analyzer import VLMAnalyzer, EnhancedVLMAnalyzer
+    HAS_VLM_ANALYZERS = True
+except ImportError:
+    HAS_VLM_ANALYZERS = False
+    # Create placeholder classes for type checking
+    class VLMAnalyzer(EntropyAnalyzer): pass
+    class EnhancedVLMAnalyzer(VLMAnalyzer): pass
+
 from .models import TokenInfo, UncertaintyAnalysisResult, UncertaintyMetrics
 
 
@@ -106,6 +116,13 @@ class UncertaintyEstimator:
             self.analyzer, (VLMAnalyzer, EnhancedVLMAnalyzer)
         )
 
+        # Check if we're using VLM analyzers and they're available
+        if isinstance(self.analyzer, (VLMAnalyzer, EnhancedVLMAnalyzer)) and not HAS_VLM_ANALYZERS:
+            raise ImportError(
+                "VLM analyzers are not available. Please install the required dependencies: "
+                "pip install 'klarity[vllm]' or pip install vllm"
+            )
+
         if is_vlm:
             if not hasattr(self.analyzer, "patch_size") or self.analyzer.patch_size is None:
                 self.analyzer.set_vision_config(model.config.vision_config)
@@ -138,7 +155,7 @@ class UncertaintyEstimator:
                     all_metrics.append(metrics)
 
             # Generate insight based on analyzer type
-            if self.is_enhanced_vlm:
+            if self.is_enhanced_vlm and HAS_VLM_ANALYZERS:
                 # For EnhancedVLMAnalyzer, always use visual analysis
                 overall_insight = self.analyzer.generate_overall_insight(
                     metrics_list=all_metrics,
