@@ -23,20 +23,17 @@ dependencies = [
     "torch>=2.6.0 ; python_version >= '3.13'",
     "sentence-transformers>=2.2.0",
     "accelerate>=0.20.0",
+    # CUDA dependencies (only on systems with CUDA)
+    "cuda-python>=12.0.0 ; platform_system == 'Linux' and platform_machine == 'x86_64'",
+    "nvidia-cuda-nvrtc-cu12>=12.0.0 ; platform_system == 'Linux' and platform_machine == 'x86_64'",
+    # vllm dependencies (only for Python < 3.13 as it requires torch==2.5.1)
+    "vllm>=0.7.0 ; python_version < '3.13'",
+    # xgrammar dependencies (only for Python <= 3.12 as it doesn't have wheels for Python 3.13 yet)
+    "xgrammar>=0.1.0 ; python_version <= '3.12'",
 ]
 
+# Keep dev as an optional dependency group for explicit installation
 [project.optional-dependencies]
-cuda = [
-    "cuda-python>=12.0.0",
-    "nvidia-cuda-nvrtc-cu12>=12.0.0",
-]
-# vllm requires torch==2.5.1, which is only compatible with Python < 3.13
-vllm = [
-    "vllm>=0.7.0 ; python_version < '3.13'",
-]
-xgrammar = [
-    "xgrammar>=0.1.0",
-]
 dev = [
     "pytest>=7.0.0",
     "ruff>=0.8.0"
@@ -77,11 +74,12 @@ Repository = "https://github.com/klara-research/klarity.git"
 package-dir = {"" = "src"}
 packages = ["klarity", "klarity.core"]
 
-[dependency-groups]
-dev = [
-    "pytest>=8.3.4",
-    "ruff>=0.8.0"
-]
+# Remove this section as we've moved dependencies to the main section
+# [dependency-groups]
+# dev = [
+#     "pytest>=8.3.4",
+#     "ruff>=0.8.0"
+# ]
 
 [tool.pytest.ini_options]
 minversion = "6.0"
