@@ -1589,7 +1589,7 @@ dependencies = [
     { name = "torch", version = "2.6.0", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.13' and sys_platform != 'linux'" },
     { name = "torch", version = "2.6.0+cu124", source = { registry = "https://download.pytorch.org/whl/cu124" }, marker = "python_full_version >= '3.13' and sys_platform == 'linux'" },
     { name = "vllm", marker = "python_full_version < '3.13'" },
-    { name = "xgrammar", marker = "python_full_version < '3.13'" },
+    { name = "xgrammar", marker = "python_full_version < '3.13' and sys_platform != 'win32'" },
 ]
 
 [package.optional-dependencies]
@@ -1620,7 +1620,7 @@ requires-dist = [
     { name = "torch", marker = "python_full_version < '3.13' and sys_platform != 'linux'", specifier = "==2.5.1" },
     { name = "torch", marker = "python_full_version >= '3.13' and sys_platform != 'linux'", specifier = ">=2.6.0" },
     { name = "vllm", marker = "python_full_version < '3.13'", specifier = ">=0.7.0" },
-    { name = "xgrammar", marker = "python_full_version < '3.13'", specifier = ">=0.1.0" },
+    { name = "xgrammar", marker = "python_full_version < '3.13' and sys_platform != 'win32'", specifier = ">=0.1.0" },
 ]
 provides-extras = ["dev"]
 
