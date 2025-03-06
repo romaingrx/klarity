@@ -32,15 +32,14 @@ dependencies = [
     "xgrammar>=0.1.14 ; platform_system != 'Windows'",
 ]
 
-# Keep dev as an optional dependency group for explicit installation
-[project.optional-dependencies]
+[dependency-groups]
 dev = [
-    "pytest>=7.0.0",
+    "pytest>=8.3.4",
     "ruff>=0.8.0"
 ]
 
+
 [tool.uv.sources]
-# For Python < 3.13, use torch 2.5.1 with CUDA on Linux
 torch = [
     { index = "pytorch-cu124", marker = "sys_platform == 'linux' and python_version < '3.13'" },
     { index = "pytorch-cu124-py3.13", marker = "sys_platform == 'linux' and python_version >= '3.13'" },
@@ -74,13 +73,6 @@ Repository = "https://github.com/klara-research/klarity.git"
 package-dir = {"" = "src"}
 packages = ["klarity", "klarity.core"]
 
-# Remove this section as we've moved dependencies to the main section
-# [dependency-groups]
-# dev = [
-#     "pytest>=8.3.4",
-#     "ruff>=0.8.0"
-# ]
-
 [tool.pytest.ini_options]
 minversion = "6.0"
 addopts = "-s"
@@ -88,3 +80,4 @@ testpaths = ["tests"]
 
 [tool.ruff]
 line-length = 120
+
