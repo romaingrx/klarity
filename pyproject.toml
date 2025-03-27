@@ -1,6 +1,4 @@
-[build-system]
-requires = ["setuptools>=45", "wheel"]
-build-backend = "setuptools.build_meta"
+
 
 [project]
 name = "klarity"
@@ -33,10 +31,7 @@ dependencies = [
 ]
 
 [dependency-groups]
-dev = [
-    "pytest>=8.3.4",
-    "ruff>=0.8.0"
-]
+dev = ["pytest>=8.3.4", "ruff>=0.8.0"]
 
 
 [tool.uv.sources]
@@ -69,9 +64,14 @@ Homepage = "https://github.com/klara-research/klarity"
 Issues = "https://github.com/klara-research/klarity/issues"
 Repository = "https://github.com/klara-research/klarity.git"
 
-[tool.setuptools]
-package-dir = {"" = "src"}
-packages = ["klarity", "klarity.core"]
+[build-system]
+requires = ["setuptools>=45", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["src/klarity*"]
+exclude = ["tests*"]
 
 [tool.pytest.ini_options]
 minversion = "6.0"
@@ -80,4 +80,3 @@ testpaths = ["tests"]
 
 [tool.ruff]
 line-length = 120
-
