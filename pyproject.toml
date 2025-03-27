@@ -69,8 +69,8 @@ requires = ["setuptools>=45", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [tool.setuptools.packages.find]
-where = ["."]
-include = ["src/klarity*"]
+where = ["src"]
+include = ["klarity*"]
 exclude = ["tests*"]
 
 [tool.pytest.ini_options]
